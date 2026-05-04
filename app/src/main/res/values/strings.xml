@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">XLock Locker</string>
+    <string name="hce_description">XLock NFC badge emulation</string>
+    <string name="btn_scan">Scan Badge</string>
+    <string name="btn_clear">Clear Badge Data</string>
+    <string name="status_no_badge">No badge scanned yet.\nTap \"Scan Badge\" and hold your Salto badge to the phone.</string>
+    <string name="status_scanning">Hold your Salto badge to the back of the phone…</string>
+    <string name="status_nfc_off">NFC is disabled. Please enable it in Settings.</string>
+    <string name="status_no_nfc">This device does not support NFC.</string>
+    <string name="label_uid">Card UID</string>
+    <string name="label_aid">AID(s)</string>
+    <string name="label_pairs">APDU pairs recorded</string>
+    <string name="label_hce_status">HCE status</string>
+    <string name="hce_active">Active — hold phone to locker</string>
+    <string name="hce_inactive">Inactive — scan a badge first</string>
+    <string name="log_title">APDU log</string>
+</resources>

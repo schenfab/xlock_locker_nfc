@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<host-apdu-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/hce_description"
+    android:requireDeviceUnlock="false"
+    android:requireDeviceScreenOn="false">
+
+    <!--
+        Placeholder AID registered for initial routing. After the badge is scanned,
+        the app calls CardEmulation.registerAidsForService() to register the actual
+        AID discovered from the badge. The "other" category ensures this service is
+        used for non-payment applications.
+    -->
+    <aid-group
+        android:category="other"
+        android:description="@string/hce_description">
+        <aid-filter android:name="F000000000" />
+    </aid-group>
+
+</host-apdu-service>
