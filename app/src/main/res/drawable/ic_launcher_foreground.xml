@@ -1,23 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Open padlock icon, 108×108 dp canvas (safe zone: 18–90 on each axis).
+
+    Layout:
+      • Lock body  – white rounded rectangle, x 20–88, y 52–90
+      • Keyhole    – circle (r 7) + stem, drawn in background blue (#1565C0)
+                     to create a cut-out effect over the white body
+      • Shackle    – white stroked open-U:
+                       left arm  enters the body at (36, 52)
+                       top arc   sweeps clockwise through (54, 22) to (72, 40)
+                       right arm rises to (72, 22), leaving a 12 dp blue gap
+                       above the body → visually "unlatched"
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Sun -->
-    <path
-        android:fillColor="#FFD600"
-        android:pathData="M54,28 a10,10 0 1,0 0.001,0 Z" />
-    <!-- Sun rays -->
-    <path
-        android:strokeColor="#FFD600"
-        android:strokeWidth="3"
-        android:strokeLineCap="round"
-        android:pathData="M54,14 L54,18 M54,38 L54,42 M40,28 L43,31 M65,25 L68,28 M40,42 L43,39 M65,39 L68,42 M34,28 L38,28 M70,28 L74,28" />
-
-    <!-- Cloud body -->
+    <!-- Lock body -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M72,55 a12,12 0 0,0 -22,-6 a9,9 0 0,0 -14,8 a8,8 0 0,0 0,16 L72,73 a10,10 0 0,0 0,-18 Z" />
+        android:pathData="M20,59 L20,83 A7,7 0 0,0 27,90 L81,90 A7,7 0 0,0 88,83 L88,59 A7,7 0 0,0 81,52 L27,52 A7,7 0 0,0 20,59 Z"/>
+
+    <!-- Keyhole cut-out (circle + stem in background colour) -->
+    <path
+        android:fillColor="#1565C0"
+        android:pathData="M47,71 a7,7 0 0,0 14,0 a7,7 0 0,0 -14,0 M51,78 L51,87 L57,87 L57,78 Z"/>
+
+    <!-- Shackle: left arm latched, right arm raised (open) -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M36,52 L36,40 A18,18 0 0,1 72,40 L72,22"/>
+
 </vector>

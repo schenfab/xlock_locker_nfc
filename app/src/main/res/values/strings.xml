@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">XLock Locker</string>
+    <string name="app_name">Un-Locker</string>
     <string name="hce_description">XLock NFC badge emulation</string>
     <string name="btn_scan">Scan Badge</string>
     <string name="btn_clear">Clear Badge Data</string>
