@@ -14,10 +14,13 @@ class HceService : HostApduService() {
 
         val response = repo.lookupResponse(hex)
         return if (response != null) {
-            Log.d(TAG, "APDU reply:    ${response.toHex()}")
+            val respHex = response.toHex()
+            Log.d(TAG, "APDU reply:    $respHex")
+            repo.appendHceLog("→ $hex\n  ← $respHex")
             response
         } else {
             Log.w(TAG, "APDU unknown:  $hex — returning 6F00")
+            repo.appendHceLog("→ $hex\n  ← 6F00 (no match in transcript)")
             APDU_UNKNOWN
         }
     }
@@ -29,6 +32,7 @@ class HceService : HostApduService() {
             else -> "unknown ($reason)"
         }
         Log.d(TAG, "HCE deactivated: $reasonStr")
+        repo.appendHceLog("--- session end: $reasonStr ---")
     }
 
     companion object {

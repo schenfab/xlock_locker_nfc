@@ -52,6 +52,17 @@ class BadgeRepository(context: Context) {
 
     fun clear() = prefs.edit().clear().apply()
 
+    // HCE activity log — written by HceService, read by MainActivity on resume
+    fun appendHceLog(entry: String) {
+        val ts = java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date())
+        val current = prefs.getString(KEY_HCE_LOG, "") ?: ""
+        prefs.edit().putString(KEY_HCE_LOG, "$current[$ts] $entry\n").apply()
+    }
+
+    fun getHceLog(): String = prefs.getString(KEY_HCE_LOG, "") ?: ""
+
+    fun clearHceLog() = prefs.edit().remove(KEY_HCE_LOG).apply()
+
     // Format: "CMD1:RESP1\nCMD2:RESP2\n..."
     private fun exchangesToString(exchanges: List<Pair<String, String>>): String =
         exchanges.joinToString("\n") { "${it.first}:${it.second}" }
@@ -72,6 +83,7 @@ class BadgeRepository(context: Context) {
         private const val KEY_TECH_LIST = "tech_list"
         private const val KEY_AIDS = "aids"
         private const val KEY_EXCHANGES = "exchanges"
+        private const val KEY_HCE_LOG = "hce_log"
     }
 }
 

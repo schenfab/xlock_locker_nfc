@@ -1,6 +1,5 @@
 package com.fschenkel.xlocklocker
 
-import android.app.Activity
 import android.content.ComponentName
 import android.content.Intent
 import android.nfc.NfcAdapter
@@ -8,7 +7,6 @@ import android.nfc.Tag
 import android.nfc.tech.IsoDep
 import android.nfc.cardemulation.CardEmulation
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -24,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private var nfcAdapter: NfcAdapter? = null
     private var cardEmulation: CardEmulation? = null
     private var scanningMode = false
+    private var scanLogText = ""
 
     private lateinit var tvStatus: TextView
     private lateinit var tvUid: TextView
@@ -78,8 +77,10 @@ class MainActivity : AppCompatActivity() {
         }
         // Make this the preferred HCE service while in foreground so we receive
         // all ISO-DEP APDUs regardless of AID routing.
-        cardEmulation?.setPreferredService(this, ComponentName(this, HceService::class.java))
+        val preferred = cardEmulation?.setPreferredService(this, ComponentName(this, HceService::class.java))
+        Log.d(tag, "setPreferredService = $preferred")
         refreshUi()
+        refreshLog()
     }
 
     override fun onPause() {
@@ -130,13 +131,15 @@ class MainActivity : AppCompatActivity() {
             runOnUiThread {
                 stopScanMode()
                 refreshUi()
-                appendLog(buildLogText(data))
+                scanLogText = buildLogText(data)
+                refreshLog()
                 Toast.makeText(this, "Badge scanned! ${data.exchanges.size} APDU pairs recorded.", Toast.LENGTH_LONG).show()
             }
         } catch (e: Exception) {
             Log.e(this.tag, "Badge read error", e)
             runOnUiThread {
-                appendLog("ERROR: ${e.message}")
+                scanLogText = "ERROR: ${e.message}"
+                refreshLog()
                 Toast.makeText(this, "Read failed: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
@@ -261,11 +264,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun clearBadge() {
         repo.clear()
+        repo.clearHceLog()
         val ce = cardEmulation
         if (ce != null) {
             val component = ComponentName(this, HceService::class.java)
             ce.registerAidsForService(component, CardEmulation.CATEGORY_OTHER, listOf("F000000000"))
         }
+        scanLogText = ""
         tvLog.text = ""
         refreshUi()
     }
@@ -304,7 +309,19 @@ class MainActivity : AppCompatActivity() {
         return sb.toString()
     }
 
-    private fun appendLog(text: String) {
-        tvLog.text = "${tvLog.text}\n$text".trim()
+    private fun refreshLog() {
+        val sb = StringBuilder()
+        val hceLog = repo.getHceLog()
+        sb.appendLine("=== HCE activity (lock → phone) ===")
+        if (hceLog.isEmpty()) {
+            sb.appendLine("(none yet — open app, then tap phone to lock)")
+        } else {
+            sb.append(hceLog)
+        }
+        if (scanLogText.isNotEmpty()) {
+            sb.appendLine()
+            sb.append(scanLogText)
+        }
+        tvLog.text = sb.toString().trim()
     }
 }
