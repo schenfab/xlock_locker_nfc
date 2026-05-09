@@ -52,15 +52,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            APK="un-locker-${{ steps.slug.outputs.value }}.apk"
+            cp app/build/outputs/apk/release/app-release.apk "$APK"
             gh release create "dev-run-${{ github.run_number }}" \
               --target "${{ github.sha }}" \
               --title "Dev build #${{ github.run_number }} (${{ github.ref_name }})" \
               --prerelease \
               --notes "Manual build from branch \`${{ github.ref_name }}\`, run #${{ github.run_number }}." \
-              "app/build/outputs/apk/release/app-release.apk#un-locker-${{ steps.slug.outputs.value }}.apk"
+              "$APK"
           else
+            APK="un-locker-${{ github.ref_name }}.apk"
+            cp app/build/outputs/apk/release/app-release.apk "$APK"
             gh release create "${{ github.ref_name }}" \
               --title "Un-Locker ${{ github.ref_name }}" \
               --generate-notes \
-              "app/build/outputs/apk/release/app-release.apk#un-locker-${{ github.ref_name }}.apk"
+              "$APK"
           fi
