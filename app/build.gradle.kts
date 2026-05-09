@@ -13,15 +13,15 @@ android {
         minSdk = 31
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = System.getenv("VERSION_NAME")?.trimStart('v') ?: "dev"
     }
 
     signingConfigs {
         create("release") {
-            storeFile = file("/home/fschenkel/.android/xlock-release.keystore")
-            storePassword = "xlock123"
-            keyAlias = "xlock"
-            keyPassword = "xlock123"
+            storeFile = file(System.getenv("KEYSTORE_PATH") ?: "/home/fschenkel/.android/xlock-release.keystore")
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: error("Set KEYSTORE_PASSWORD env var")
+            keyAlias = System.getenv("KEY_ALIAS") ?: "xlock"
+            keyPassword = System.getenv("KEY_PASSWORD") ?: error("Set KEY_PASSWORD env var")
         }
     }
 

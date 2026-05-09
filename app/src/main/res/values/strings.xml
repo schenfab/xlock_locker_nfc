@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Un-Locker</string>
-    <string name="hce_description">XLock NFC badge emulation</string>
+    <string name="hce_description">Salto NFC badge emulation</string>
     <string name="btn_scan">Scan Badge</string>
     <string name="btn_clear">Clear Badge Data</string>
     <string name="status_no_badge">No badge scanned yet.\nTap \"Scan Badge\" and hold your Salto badge to the phone.</string>

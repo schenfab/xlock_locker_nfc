@@ -1,6 +1,6 @@
-# XLock Locker NFC
+# Un-Locker
 
-Android app that reads a Salto MIFARE DeSFire badge and emulates it via Host Card Emulation (HCE) to unlock an XLock locker without carrying the badge.
+Android app that reads a Salto MIFARE DeSFire badge and emulates it via Host Card Emulation (HCE) to unlock your locker without carrying the badge.
 
 ## Requirements
 

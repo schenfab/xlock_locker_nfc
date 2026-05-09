@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var layoutBadgeInfo: View
     private lateinit var btnScan: Button
     private lateinit var btnClear: Button
+    private lateinit var tvVersion: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +60,8 @@ class MainActivity : AppCompatActivity() {
         layoutBadgeInfo = findViewById(R.id.layoutBadgeInfo)
         btnScan = findViewById(R.id.btnScan)
         btnClear = findViewById(R.id.btnClear)
+        tvVersion = findViewById(R.id.tvVersion)
+        tvVersion.text = "v${BuildConfig.VERSION_NAME}"
 
         btnScan.setOnClickListener { toggleScanMode() }
         btnClear.setOnClickListener { clearBadge() }
