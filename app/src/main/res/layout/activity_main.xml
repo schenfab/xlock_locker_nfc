@@ -197,7 +197,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:textSize="11sp"
-            android:textColor="?attr/colorOnSurfaceVariant"
             android:gravity="center"
             android:alpha="0.5" />
 
