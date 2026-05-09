@@ -18,6 +18,12 @@ class MainActivity : AppCompatActivity() {
 
     private val tag = "MainActivity"
 
+    companion object {
+        // Salto ISO 7816 AID — confirmed from dumpsys nfc output (JustIN Mobile registers this).
+        // The XLock reader sends SELECT with this AID; we must register it to intercept traffic.
+        const val SALTO_AID = "A000000743CC843413925E20C59B0100"
+    }
+
     private lateinit var repo: BadgeRepository
     private var nfcAdapter: NfcAdapter? = null
     private var cardEmulation: CardEmulation? = null
@@ -166,6 +172,19 @@ class MainActivity : AppCompatActivity() {
             // ISO 7816: SELECT by name with no AID (returns ATR or default app)
             transceive(byteArrayOf(0x00, 0xA4.toByte(), 0x04, 0x00, 0x00))
 
+            // SELECT the Salto AID — this is what the XLock reader actually sends
+            // (confirmed via dumpsys nfc: JustIN Mobile registers A000000743CC843413925E20C59B0100)
+            val saltoAid = "A000000743CC843413925E20C59B0100".hexToBytes()
+            val saltoSelect = byteArrayOf(0x00, 0xA4.toByte(), 0x04, 0x00, saltoAid.size.toByte()) +
+                    saltoAid + byteArrayOf(0x00)
+            val saltoResp = transceive(saltoSelect)
+            // If the Salto app is present, keep issuing commands until the exchange is complete
+            if (saltoResp.size >= 2) {
+                val sw = (saltoResp[saltoResp.size - 2].toInt() and 0xFF shl 8) or
+                        (saltoResp[saltoResp.size - 1].toInt() and 0xFF)
+                Log.d(tag, "Salto SELECT response SW: %04X".format(sw))
+            }
+
             // DeSFire: GET_VERSION (0x60) — may require up to 3 calls for 0xAF continuation
             var resp = transceive(byteArrayOf(0x90.toByte(), 0x60, 0x00, 0x00, 0x00))
             repeat(2) {
@@ -251,12 +270,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun registerAids(aids: List<String>) {
-        if (aids.isEmpty()) return
         val ce = cardEmulation ?: return
         val component = ComponentName(this, HceService::class.java)
-        // Convert 3-byte DeSFire AIDs to valid 5-byte ISO 7816 AIDs by padding
-        val isoAids = aids.map { desfire3byte ->
-            if (desfire3byte.length >= 10) desfire3byte else desfire3byte.padEnd(10, '0')
+        // Always include the Salto AID (confirmed from dumpsys) plus any discovered DeSFire AIDs
+        val isoAids = mutableListOf(SALTO_AID)
+        aids.forEach { a ->
+            val padded = if (a.length >= 10) a else a.padEnd(10, '0')
+            if (padded !in isoAids) isoAids.add(padded)
         }
         val registered = ce.registerAidsForService(component, CardEmulation.CATEGORY_OTHER, isoAids)
         Log.d(tag, "registerAidsForService($isoAids) = $registered")

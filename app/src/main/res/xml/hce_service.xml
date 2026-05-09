@@ -4,15 +4,14 @@
     android:requireDeviceUnlock="false"
     android:requireDeviceScreenOn="false">
 
-    <!--
-        Placeholder AID registered for initial routing. After the badge is scanned,
-        the app calls CardEmulation.registerAidsForService() to register the actual
-        AID discovered from the badge. The "other" category ensures this service is
-        used for non-payment applications.
-    -->
     <aid-group
         android:category="other"
         android:description="@string/hce_description">
+        <!-- Salto ISO 7816 AID — confirmed from dumpsys as the AID used by JustIN Mobile
+             and therefore the AID the XLock reader selects. Registering it here lets our
+             service compete with JustIN Mobile; setPreferredService() wins in foreground. -->
+        <aid-filter android:name="A000000743CC843413925E20C59B0100" />
+        <!-- Placeholder kept as fallback -->
         <aid-filter android:name="F000000000" />
     </aid-group>
 
