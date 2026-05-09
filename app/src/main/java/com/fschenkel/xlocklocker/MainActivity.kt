@@ -81,8 +81,8 @@ class MainActivity : AppCompatActivity() {
         if (scanningMode) {
             enableReaderMode()
         }
-        // Make this the preferred HCE service while in foreground so we receive
-        // all ISO-DEP APDUs regardless of AID routing.
+        // Claim the Salto AID dynamically so JustIN Mobile retains it when this app is closed.
+        registerAids(repo.load()?.aids ?: emptyList())
         val preferred = cardEmulation?.setPreferredService(this, ComponentName(this, HceService::class.java))
         Log.d(tag, "setPreferredService = $preferred")
         refreshUi()
@@ -93,6 +93,9 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
         nfcAdapter?.disableReaderMode(this)
         cardEmulation?.unsetPreferredService(this)
+        // Release the Salto AID so JustIN Mobile handles door access when we are not in foreground.
+        val component = ComponentName(this, HceService::class.java)
+        cardEmulation?.registerAidsForService(component, CardEmulation.CATEGORY_OTHER, listOf("F000000000"))
     }
 
     override fun onNewIntent(intent: Intent) {

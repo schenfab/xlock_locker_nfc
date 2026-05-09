@@ -4,14 +4,12 @@
     android:requireDeviceUnlock="false"
     android:requireDeviceScreenOn="false">
 
+    <!-- Only a placeholder AID is registered statically. The Salto AID is registered
+         dynamically in onResume() and removed in onPause(), so JustIN Mobile handles
+         door access normally whenever Un-Locker is not in the foreground. -->
     <aid-group
         android:category="other"
         android:description="@string/hce_description">
-        <!-- Salto ISO 7816 AID — confirmed from dumpsys as the AID used by JustIN Mobile
-             and therefore the AID the XLock reader selects. Registering it here lets our
-             service compete with JustIN Mobile; setPreferredService() wins in foreground. -->
-        <aid-filter android:name="A000000743CC843413925E20C59B0100" />
-        <!-- Placeholder kept as fallback -->
         <aid-filter android:name="F000000000" />
     </aid-group>
 
