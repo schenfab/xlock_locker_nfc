@@ -43,10 +43,14 @@ jobs:
           VERSION_NAME: ${{ github.ref_name }}
         run: ./gradlew assembleRelease
 
+      - name: Compute artifact slug
+        id: slug
+        run: echo "value=$(echo '${{ github.ref_name }}' | tr '/' '-')" >> $GITHUB_OUTPUT
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v7
         with:
-          name: un-locker-${{ github.ref_name }}
+          name: un-locker-${{ steps.slug.outputs.value }}
           path: app/build/outputs/apk/release/app-release.apk
           retention-days: 30
 
