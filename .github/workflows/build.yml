@@ -43,28 +43,28 @@ jobs:
           VERSION_NAME: ${{ github.ref_name }}
         run: ./gradlew assembleRelease
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: un-locker-${{ github.ref_name }}
-          path: app/build/outputs/apk/release/app-release.apk
-          retention-days: 30
+      - name: Compute APK slug
+        id: slug
+        run: echo "value=$(echo '${{ github.ref_name }}' | tr '/' '-')" >> $GITHUB_OUTPUT
 
-      - name: Upload Gradle problems report
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: gradle-problems-report
-          path: build/reports/problems/
-          retention-days: 7
-          if-no-files-found: ignore
-
-      - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Publish release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "${{ github.ref_name }}" \
-            --title "Un-Locker ${{ github.ref_name }}" \
-            --generate-notes \
-            "app/build/outputs/apk/release/app-release.apk#un-locker-${{ github.ref_name }}.apk"
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            APK="un-locker-${{ steps.slug.outputs.value }}.apk"
+            cp app/build/outputs/apk/release/app-release.apk "$APK"
+            gh release create "dev-run-${{ github.run_number }}" \
+              --target "${{ github.sha }}" \
+              --title "Dev build #${{ github.run_number }} (${{ github.ref_name }})" \
+              --prerelease \
+              --notes "Manual build from branch \`${{ github.ref_name }}\`, run #${{ github.run_number }}." \
+              "$APK"
+          else
+            APK="un-locker-${{ github.ref_name }}.apk"
+            cp app/build/outputs/apk/release/app-release.apk "$APK"
+            gh release create "${{ github.ref_name }}" \
+              --title "Un-Locker ${{ github.ref_name }}" \
+              --generate-notes \
+              "$APK"
+          fi

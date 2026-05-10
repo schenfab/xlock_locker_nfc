@@ -6,6 +6,7 @@ import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.IsoDep
 import android.nfc.cardemulation.CardEmulation
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -103,7 +104,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        val nfcTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG, Tag::class.java)
+        @Suppress("DEPRECATION")
+        val nfcTag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(NfcAdapter.EXTRA_TAG, Tag::class.java)
+        } else {
+            intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
+        }
         if (nfcTag != null) {
             handleTag(nfcTag)
         }
